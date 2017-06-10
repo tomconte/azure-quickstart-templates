@@ -76,8 +76,11 @@ echo "===== Starting geth installation =====";
 wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.6.0-facc47cb.tar.gz || unsuccessful_exit "geth download failed";
 wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.6.0-facc47cb.tar.gz.asc || unsuccessful_exit "geth signature download failed";
 
+# Ugly workaround for gnupg host lookup issues
+gpg_addr=$(host pool.sks-keyservers.net 8.8.8.8 | grep 'has address' | head -1 | cut -d' ' -f4)
+
 # Import geth buildserver keys
-gpg --recv-keys --keyserver hkp://keys.gnupg.net F9585DE6 C2FF8BBF 9BA28146 7B9E2481 D2A67EAC || unsuccessful_exit "import geth buildserver keys failed";
+gpg --recv-keys --keyserver hkp://${gpg_addr} F9585DE6 C2FF8BBF 9BA28146 7B9E2481 D2A67EAC || unsuccessful_exit "import geth buildserver keys failed";
 
 # Validate signature
 gpg --verify geth-alltools-linux-amd64-1.6.0-facc47cb.tar.gz.asc || unsuccessful_exit "validate geth download failed";
